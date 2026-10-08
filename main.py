@@ -11,6 +11,7 @@ from logger import log_event
 
 def main():
     pygame.init()
+    font = pygame.font.Font(None, 36)
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
     dt = 0.0
@@ -24,6 +25,9 @@ def main():
     Shot.containers = (shots, updatable, drawable)
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     asteroid_field = AsteroidField()
+    split_points = 1
+    kill_points = 3
+    score = 0
     while True:
         log_state()
         for event in pygame.event.get():
@@ -42,8 +46,18 @@ def main():
             for shot in shots:
                 if asteroid.collides_with(shot):
                     log_event("asteroid_shot")
-                    asteroid.split()
+                    did_split = asteroid.split()
                     shot.kill()
+                    if did_split:
+                        score += split_points
+                        log_event("asteroid_split")
+
+                    else:
+                        score += kill_points
+                        log_event("asteroid_kill")
+        score_surface = font.render(f"Score: {score}", True, "white")
+        score_rect = score_surface.get_rect(topright=(SCREEN_WIDTH - 20, 20))
+        screen.blit(score_surface, score_rect)
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 

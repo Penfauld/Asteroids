@@ -15,6 +15,7 @@ class Asteroid(CircleShape):
     def split(self):
         self.kill()
         if self.radius <= ASTEROID_MIN_RADIUS:
+            log_event("asteroid_kill")
             return
         else:
             log_event("asteroid_split")
